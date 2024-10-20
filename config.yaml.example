@@ -1,0 +1,9 @@
+database_uri: postgresql://USERNAME:PASSWORD@localhost/DATABASE_NAME
+port: 8888
+secret: TOKEN_SIGNING_SECRET_HERE
+
+email:
+  display: Name <foo@example.com>
+  username: foo@example.com
+  password: SMTP_PASSWORD_HERE
+  hostname: smtp.example.com

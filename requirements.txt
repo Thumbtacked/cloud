@@ -1,0 +1,7 @@
+aiosmtplib
+asyncpg
+bcrypt
+cerberus
+itsdangerous
+pyyaml
+tornado
