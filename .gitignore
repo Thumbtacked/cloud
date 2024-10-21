@@ -1,3 +1,4 @@
 config.yaml
+thumbtacked.log
 venv/*
 *.pyc

@@ -19,12 +19,9 @@ class BaseHandler(tornado.web.RequestHandler):
 
         self.current_user = user
 
-    def write_error(self, status, *, message=None, exc_info=None):
-        if status == 500:
-            message = "The server experienced and logged an internal error."
-
+    def write_error(self, status, *, message="Experienced an unknown error.", exc_info=None):
         self.set_status(status)
-        self.finish(message)
+        self.finish({"message": message})
 
     def options(self):
         self.set_status(204)

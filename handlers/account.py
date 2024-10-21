@@ -5,9 +5,9 @@ from utils import validate
 
 class AccountHandler(BaseHandler):
     @validate({
-        "name": {"type": "string", "min": 1, "max": 64},
-        "email": {"type": "string", "min": 3, "max": 320},
-        "password": {"type": "string", "min": 8, "max": 72},
+        "name": {"type": "string", "minlength": 1, "maxlength": 64},
+        "email": {"type": "string", "minlength": 3, "maxlength": 320},
+        "password": {"type": "string", "minlength": 8, "maxlength": 72},
         "code": {"type": "integer", "min": 10**8, "max": 10**9-1}
     })
     async def post(self):
@@ -30,10 +30,10 @@ class AccountHandler(BaseHandler):
         })
 
     @validate({
-        "current_password": {"type": "string", "min": 8, "max": 72, "dependencies": ["email", "password"]},
-        "name": {"type": "string", "min": 1, "max": 64},
-        "email": {"type": "string", "min": 1, "min": 3, "max": 320, "dependencies": ["code"]},
-        "password": {"type": "string", "min": 8, "max": 72},
+        "current_password": {"type": "string", "minlength": 8, "maxlength": 72},
+        "name": {"type": "string", "minlength": 1, "maxlength": 64},
+        "email": {"type": "string", "minlength": 3, "max": 320, "dependencies": ["current_password", "code"]},
+        "password": {"type": "string", "minlength": 8, "maxlength": 72, "dependincies": ["current_password"]},
         "code": {"type": "integer", "min": 10**8, "max": 10**9-1}
     }, require_all=False, require_authentication=True)
     async def patch(self):

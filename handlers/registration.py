@@ -7,7 +7,7 @@ from utils import validate
 
 class RegistrationHandler(BaseHandler):
     @validate({
-        "email": {"type": "string"}
+        "email": {"type": "string", "minlength": 3, "maxlength": 320}
     })
     async def post(self):
         email = self.body["email"]
@@ -26,7 +26,8 @@ class RegistrationHandler(BaseHandler):
         try:
             await self.application.email.deliver(email, subject, content)
         except (aiosmtplib.SMTPRecipientsRefused, aiosmtplib.SMTPException):
-            self.send_error(400, message="Unable to deliver registration code to email.")
+            return self.send_error(400, message="Unable to deliver registration code to email.")
 
+        self.application.log.info("Sent registration code %s to %s", code, email)
         self.application.registration_codes[email] = code
         self.set_status(204)
