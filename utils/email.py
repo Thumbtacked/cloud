@@ -1,6 +1,8 @@
 import aiosmtplib
-import email
 import random
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 class EmailDeliveryService:
     __slots__ = ("display", "username", "password", "hostname", "port")
@@ -13,11 +15,11 @@ class EmailDeliveryService:
         self.port = port = config.get("port", 587)
 
     async def deliver(self, address, subject, content):
-        message = email.message.EmailMessage()
+        message = MIMEMultipart()
         message["From"] = self.display
         message["To"] = address
         message["Subject"] = subject
-        message.set_content(content)
+        message.attach(MIMEText(content, "html"))
 
         async with aiosmtplib.SMTP(hostname=self.hostname, port=self.port) as smtp:
             await smtp.login(self.username, self.password)

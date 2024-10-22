@@ -17,11 +17,11 @@ class RegistrationHandler(BaseHandler):
 
         code = secrets.choice(range(10**8, 10**9-1))
         subject = f"Thumbtacked Registration Code"
-        content = f"""
-        Your registration code is {code}.
-        
-        This code will last up to 15 minutes. Do not share it with anyone.
-        """
+        content = (
+        f"Your registration code is <code>{code}</code>"
+        "<br /><br />"
+        "This code will last up to 15 minutes. Do not share it with anyone."
+        )
 
         try:
             await self.application.email.deliver(email, subject, content)
