@@ -1,7 +1,7 @@
-import tornado
+from __future__ import annotations
 
 from .base import BaseHandler
-from utils import validate
+from server.utils import validate
 
 class AccountHandler(BaseHandler):
     @validate({
@@ -33,7 +33,7 @@ class AccountHandler(BaseHandler):
         "current_password": {"type": "string", "minlength": 8, "maxlength": 72},
         "name": {"type": "string", "minlength": 1, "maxlength": 64},
         "email": {"type": "string", "minlength": 3, "max": 320, "dependencies": ["current_password", "code"]},
-        "password": {"type": "string", "minlength": 8, "maxlength": 72, "dependincies": ["current_password"]},
+        "password": {"type": "string", "minlength": 8, "maxlength": 72, "dependencies": ["current_password"]},
         "code": {"type": "integer", "min": 10**8, "max": 10**9-1}
     }, require_all=False, require_authentication=True)
     async def patch(self):
@@ -52,7 +52,7 @@ class AccountHandler(BaseHandler):
         await self.current_user.update(name=name, email=email, password=password)
 
         self.write({
-            "id": current_user.id,
-            "name": current_user.name,
-            "email": current_User.email
+            "id": self.current_user.id,
+            "name": self.current_user.name,
+            "email": self.current_user.email
         })

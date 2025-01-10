@@ -1,9 +1,13 @@
+from __future__ import annotations
+
 import aiosmtplib
+import logging
 import secrets
-import tornado
 
 from .base import BaseHandler
-from utils import validate
+from server.utils import validate
+
+logger = logging.getLogger(__name__)
 
 class RegistrationHandler(BaseHandler):
     @validate({
@@ -18,9 +22,9 @@ class RegistrationHandler(BaseHandler):
         code = secrets.choice(range(10**8, 10**9-1))
         subject = f"Thumbtacked Registration Code"
         content = (
-        f"Your registration code is <code>{code}</code>"
-        "<br /><br />"
-        "This code will last up to 15 minutes. Do not share it with anyone."
+            f"Your registration code is <code>{code}</code>"
+            "<br /><br />"
+            "This code will last up to 15 minutes. Do not share it with anyone."
         )
 
         try:
@@ -28,6 +32,6 @@ class RegistrationHandler(BaseHandler):
         except (aiosmtplib.SMTPRecipientsRefused, aiosmtplib.SMTPException):
             return self.send_error(400, message="Unable to deliver registration code to email.")
 
-        self.application.log.info("Sent registration code %s to %s", code, email)
+        logger.info("Sent registration code %s to %s", code, email)
         self.application.registration_codes[email] = code
         self.set_status(204)

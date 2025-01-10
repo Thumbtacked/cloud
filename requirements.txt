@@ -1,6 +1,6 @@
 aiosmtplib
+argon2-cffi
 asyncpg
-bcrypt
 cerberus
 itsdangerous
 pyyaml

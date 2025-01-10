@@ -1,7 +1,8 @@
-import time
+from __future__ import annotations
 
 from .base import BaseHandler
-from utils import validate
+from server.utils import validate
+
 
 class LoginHandler(BaseHandler):
     @validate({
@@ -13,9 +14,8 @@ class LoginHandler(BaseHandler):
         password = self.body["password"]
 
         user = await self.application.database.get_user_by_email(email)
-  
         if not user or not (await user.check_password(password)):
-            return self.set_status(400, message="Email or password is invalid.")
+            return self.send_error(400, message="Email or password is invalid.")
 
         self.set_token(self.application.token.create_token(user.id))
         self.set_status(204)
@@ -29,7 +29,7 @@ class LoginHandler(BaseHandler):
             await self.current_user.update(max_token_age=self.application.token.current_time())
 
         if self.body.get("refresh"):
-            self.set_token(self.application.token.create_token(user.id))
+            self.set_token(self.application.token.create_token(self.current_user.id))
         else:
             self.unset_token()
 

@@ -1,9 +1,12 @@
+from __future__ import annotations
+
 import time
+from typing import Any
 
 class ExpiringDictionary(dict):
-    def __init__(self, *, max_age):
-        self._max_age = max_age
+    def __init__(self, *, max_age: float):
         super().__init__()
+        self._max_age: float = max_age
 
     def _update(self):
         for key, value in list(super().items()):
@@ -20,7 +23,7 @@ class ExpiringDictionary(dict):
 
     def __delitem__(self, key):
         self._update()
-        super().__delitem__()
+        super().__delitem__(key)
 
     def __contains__(self, key):
         self._update()
@@ -31,7 +34,8 @@ class ExpiringDictionary(dict):
         item = super().get(key)
         return item.value if item else default
 
+
 class _ExpiringDictionaryItem:
-    def __init__(self, value, expires_at):
-        self.value = value
-        self.expires_at = expires_at
+    def __init__(self, value: Any, expires_at: float):
+        self.value: Any = value
+        self.expires_at: float = expires_at

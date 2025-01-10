@@ -1,13 +1,17 @@
+from __future__ import annotations
+
 import base64
+import datetime
 import itsdangerous
+
 
 class TokenGenerator:
     __slots__  = ("_signer", "epoch", "counter")
 
-    def __init__(self, secret):
-        self._signer = itsdangerous.TimestampSigner(secret)
-        self.epoch = 1704067200
-        self.counter = 1
+    def __init__(self, secret: str):
+        self._signer: itsdangerous.TimestampSigner = itsdangerous.TimestampSigner(secret)
+        self.epoch: int = 1704067200
+        self.counter: int = 1
 
     def current_id(self):
         now = self._signer.get_timestamp()
@@ -19,21 +23,20 @@ class TokenGenerator:
     def current_time(self):
         return self._signer.timestamp_to_datetime(self._signer.get_timestamp()).replace(tzinfo=None)
 
-    def create_token(self, user_id):
+    def create_token(self, user_id: str):
         encoded_user_id = base64.b64encode(user_id.encode())
         return self._signer.sign(encoded_user_id).decode()
 
-    def validate_token(self, token):
-        encoded_token = token.encode()
-
+    def validate_token(self, token: str):
         try:
-            return ValidatedToken(self._signer.unsign(encoded_token, return_timestamp=True))
+            return ValidatedToken(*self._signer.unsign(token, return_timestamp=True))
         except itsdangerous.BadData:
             return None
+
 
 class ValidatedToken:
     __slots__ = ("user_id", "age")
 
-    def __init__(self, unsigned):
-        self.user_id = base64.b64decode(unsigned[0]).decode()
-        self.age = unsigned[1].replace(tzinfo=None)
+    def __init__(self, encoded_user_id: bytes, created_at: datetime.datetime):
+        self.user_id: str = base64.b64decode(encoded_user_id).decode()
+        self.age: datetime.datetime = created_at.replace(tzinfo=None)
